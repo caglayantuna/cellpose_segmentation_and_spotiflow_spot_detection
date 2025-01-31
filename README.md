@@ -13,7 +13,7 @@ This repository contains code and notebooks for cell segmentation and spot detec
    A Python script to apply the segmentation and spot detection methods to all images in a directory. The script will:
    - Segment cells using Cellpose
    - Detect spots within segmented cells using Spotiflow
-   - Count the number of spots per cell and calculate the mean intensity
+   - Count the number of spots per cell and calculate the mean intensity per cell
    - Store the results in a CSV file.
 
 ### Requirements:
@@ -30,11 +30,12 @@ This repository contains code and notebooks for cell segmentation and spot detec
 2. Install the dependencies using:
 pip install -r requirements.txt
 3. Run the notebooks or use the Python script (`process_images.py`) to process your images:
-python process_images.py <path_to_images_directory> <output_csv_file>
+```python
+python process_images.py --directory /path/to/images --image_save_dir /path/to/save/images --save_dir /path/to/save/csv
+```
 
 ### Output:
-- The script will generate a CSV file containing:
-- Cell ID
+- The script will generate 2 CSV files containing:
 - Spot count for each cell
 - Mean intensity of spots within each cell
 
