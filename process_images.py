@@ -9,6 +9,37 @@ from spotiflow.model import Spotiflow
 
 
 def process_images(directory, image_save_dir, save_dir):
+    """
+    Processes a set of images in a given directory, performs cell segmentation and spot detection,
+    and saves the processed results to specified directories.
+
+    Parameters:
+    -----------
+    directory : str
+        The path to the directory containing the image files. The images should be in `.tif` format 
+        and organized such that corresponding C1 and C2 channels are named similarly (e.g., `C1_image1.tif` 
+        and `C2_image1.tif`).
+
+    image_save_dir : str
+        The path to the directory where processed images (e.g., mask images and spot visualizations) 
+        will be saved. Each image will be saved in a subfolder named after the corresponding C1 image 
+        (e.g., `C1_image1/` for `C1_image1.tif`).
+
+    save_dir : str
+        The path to the directory where CSV files containing the analysis results will be saved.
+        Two CSV files will be created for each image:
+        - `<image_name>_spots.csv` containing spot counts for each mask
+        - `<image_name>_intensities.csv` containing average intensities for each 
+    
+    Example Usage:
+    ---------------
+    ```python
+    process_images("/path/to/images", "/path/to/save/images", "/path/to/save/csv")
+    ```
+    This will process all the images in `/path/to/images`, save the results in `/path/to/save/images`, 
+    and save the CSV files in `/path/to/save/csv`.
+    """
+    
     base_model = models.Cellpose(gpu=True, model_type="cyto3")
     model_spot = Spotiflow.from_pretrained("general")
 
@@ -87,9 +118,25 @@ def process_images(directory, image_save_dir, save_dir):
             print(f"Processed: {count} - {image_folder[i]}")
 
 
-if __name__ == "__main__":
-    directory = "/path/to/images/"
-    image_save_dir = "/path/to/image_save_dir/"
-    save_dir = "/path/to/save_dir/"
+def parse_args():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(description="Process images for spot detection and intensity analysis.")
+    
+    # Define arguments for directories
+    parser.add_argument('--directory', type=str, required=True, help="Path to the directory containing images")
+    parser.add_argument('--image_save_dir', type=str, required=True, help="Path to the directory to save processed images")
+    parser.add_argument('--save_dir', type=str, required=True, help="Path to the directory to save CSV files")
 
+    return parser.parse_args()
+
+if __name__ == "__main__":
+    # Parse command-line arguments
+    args = parse_args()
+
+    # Get the directory paths from arguments
+    directory = args.directory
+    image_save_dir = args.image_save_dir
+    save_dir = args.save_dir
+
+    # Run the image processing
     process_images(directory, image_save_dir, save_dir)
